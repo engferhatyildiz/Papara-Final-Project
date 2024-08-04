@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform", "PaparaDigitalProductPlatform\PaparaDigitalProductPlatform.csproj", "{67E880B0-2100-4EF8-99B5-1B5064955AD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Api", "PaparaDigitalProductPlatform.Api\PaparaDigitalProductPlatform.Api.csproj", "{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Application", "PaparaDigitalProductPlatform.Application\PaparaDigitalProductPlatform.Application.csproj", "{E65CD325-30A5-4C17-B470-6DE214DD3733}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Domain", "PaparaDigitalProductPlatform.Domain\PaparaDigitalProductPlatform.Domain.csproj", "{9EEAFCD0-398D-4E8A-8414-DFBDD735A379}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Infrastructure", "PaparaDigitalProductPlatform.Infrastructure\PaparaDigitalProductPlatform.Infrastructure.csproj", "{9F22655E-2C6A-4E6F-AA8B-AF678D96DE89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Persistence", "PaparaDigitalProductPlatform.Persistence\PaparaDigitalProductPlatform.Persistence.csproj", "{BB749605-BFAD-43F8-8984-0F429B2E92C9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67E880B0-2100-4EF8-99B5-1B5064955AD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67E880B0-2100-4EF8-99B5-1B5064955AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67E880B0-2100-4EF8-99B5-1B5064955AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67E880B0-2100-4EF8-99B5-1B5064955AD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E65CD325-30A5-4C17-B470-6DE214DD3733}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E65CD325-30A5-4C17-B470-6DE214DD3733}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E65CD325-30A5-4C17-B470-6DE214DD3733}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E65CD325-30A5-4C17-B470-6DE214DD3733}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EEAFCD0-398D-4E8A-8414-DFBDD735A379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EEAFCD0-398D-4E8A-8414-DFBDD735A379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EEAFCD0-398D-4E8A-8414-DFBDD735A379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EEAFCD0-398D-4E8A-8414-DFBDD735A379}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F22655E-2C6A-4E6F-AA8B-AF678D96DE89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F22655E-2C6A-4E6F-AA8B-AF678D96DE89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F22655E-2C6A-4E6F-AA8B-AF678D96DE89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F22655E-2C6A-4E6F-AA8B-AF678D96DE89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB749605-BFAD-43F8-8984-0F429B2E92C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB749605-BFAD-43F8-8984-0F429B2E92C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB749605-BFAD-43F8-8984-0F429B2E92C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB749605-BFAD-43F8-8984-0F429B2E92C9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
