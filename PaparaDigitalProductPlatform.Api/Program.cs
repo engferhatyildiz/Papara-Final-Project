@@ -1,4 +1,7 @@
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using PaparaDigitalProductPlatform;
+using PaparaDigitalProductPlatform.Api;
 
 public class Program
 {

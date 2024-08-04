@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform", "PaparaDigitalProductPlatform\PaparaDigitalProductPlatform.csproj", "{67E880B0-2100-4EF8-99B5-1B5064955AD1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Api", "PaparaDigitalProductPlatform.Api\PaparaDigitalProductPlatform.Api.csproj", "{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Api", "PaparaDigitalProductPlatform.Api\PaparaDigitalProductPlatform.Api.csproj", "{67E880B0-2100-4EF8-99B5-1B5064955AD1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaDigitalProductPlatform.Application", "PaparaDigitalProductPlatform.Application\PaparaDigitalProductPlatform.Application.csproj", "{E65CD325-30A5-4C17-B470-6DE214DD3733}"
 EndProject
@@ -22,10 +20,6 @@ Global
 		{67E880B0-2100-4EF8-99B5-1B5064955AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67E880B0-2100-4EF8-99B5-1B5064955AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67E880B0-2100-4EF8-99B5-1B5064955AD1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1BCDDEDB-1A60-40E1-BA25-C61FC1052628}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E65CD325-30A5-4C17-B470-6DE214DD3733}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E65CD325-30A5-4C17-B470-6DE214DD3733}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E65CD325-30A5-4C17-B470-6DE214DD3733}.Release|Any CPU.ActiveCfg = Release|Any CPU
