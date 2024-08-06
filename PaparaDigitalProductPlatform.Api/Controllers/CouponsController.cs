@@ -25,7 +25,7 @@ public class CouponsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var coupons = await _couponService.GetAllCoupons();
+        var coupons = await _couponService.GetAllAsync();
         return Ok(coupons);
     }
 

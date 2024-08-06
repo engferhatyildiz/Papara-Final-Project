@@ -12,7 +12,7 @@ using PaparaDigitalProductPlatform.Persistance;
 namespace PaparaDigitalProductPlatform.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240804210134_InitialCreate")]
+    [Migration("20240805132044_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

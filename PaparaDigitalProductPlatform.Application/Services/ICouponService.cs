@@ -6,6 +6,8 @@ namespace PaparaDigitalProductPlatform.Application.Services;
 public interface ICouponService
 {
     Task<Coupon> CreateCoupon(CouponDto couponDto);
-    Task<List<Coupon>> GetAllCoupons();
+    Task<List<Coupon>> GetAllAsync();
     Task DeleteCoupon(int couponId);
+    
+    
 }

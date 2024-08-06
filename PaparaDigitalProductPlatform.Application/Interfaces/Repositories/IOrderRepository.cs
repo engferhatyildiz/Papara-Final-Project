@@ -8,4 +8,5 @@ public interface IOrderRepository
     Task AddOrderDetailAsync(OrderDetail orderDetail);
     Task<List<Order>> GetActiveByUserIdAsync(int userId);
     Task<List<Order>> GetHistoryByUserIdAsync(int userId);
+    Task<IEnumerable<Order>> GetAllAsync();
 }

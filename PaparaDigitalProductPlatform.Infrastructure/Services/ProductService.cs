@@ -55,4 +55,9 @@ public class ProductService : IProductService
     {
         return await _productRepository.GetByCategoryAsync(categoryId);
     }
+    
+    public async Task<IEnumerable<Product>> GetAllAsync()
+    {
+        return await _productRepository.GetAllAsync();
+    }
 }

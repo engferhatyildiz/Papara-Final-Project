@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Services;
+using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Api.Controllers;
 
@@ -41,5 +42,12 @@ public class UsersController : ControllerBase
     {
         await _userService.DeleteUser(id);
         return NoContent();
+    }
+    
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<User>>> GetAll()
+    {
+        var users = await _userService.GetAllAsync();
+        return Ok(users);
     }
 }

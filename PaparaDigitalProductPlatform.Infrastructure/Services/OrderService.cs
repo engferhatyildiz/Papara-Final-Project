@@ -50,4 +50,9 @@ public class OrderService : IOrderService
     {
         return await _orderRepository.GetHistoryByUserIdAsync(userId);
     }
+    
+    public async Task<IEnumerable<Order>> GetAllAsync()
+    {
+        return await _orderRepository.GetAllAsync();
+    }
 }

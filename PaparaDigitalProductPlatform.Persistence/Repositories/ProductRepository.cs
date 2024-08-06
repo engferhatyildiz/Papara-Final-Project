@@ -44,4 +44,8 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products.Where(p => p.CategoryId == categoryId).ToListAsync();
     }
+    public async Task<IEnumerable<Product>> GetAllAsync()
+    {
+        return await _context.Products.ToListAsync();
+    }
 }

@@ -28,7 +28,7 @@ public class CouponService : ICouponService
         return coupon;
     }
 
-    public async Task<List<Coupon>> GetAllCoupons()
+    public async Task<List<Coupon>> GetAllAsync()
     {
         return await _couponRepository.GetAllAsync();
     }

@@ -9,4 +9,5 @@ public interface IProductService
     Task UpdateProduct(ProductDto productDto);
     Task DeleteProduct(int productId);
     Task<List<Product>> GetProductsByCategory(int categoryId);
+    Task<IEnumerable<Product>> GetAllAsync();
 }

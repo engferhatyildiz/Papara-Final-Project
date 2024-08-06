@@ -2,12 +2,16 @@
 using Microsoft.Extensions.Hosting;
 using PaparaDigitalProductPlatform;
 using PaparaDigitalProductPlatform.Api;
+using PaparaDigitalProductPlatform.Persistance;
+using PaparaDigitalProductPlatform.Persistence;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        CreateHostBuilder(args).Build().Run();
+        var host = CreateHostBuilder(args).Build();
+        DbInitializer.Initialize(host);
+        host.Run();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>

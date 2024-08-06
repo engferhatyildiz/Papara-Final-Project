@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PaparaDigitalProductPlatform.Application.Interfaces.Repositories;
+using PaparaDigitalProductPlatform.Application.Services;
+using PaparaDigitalProductPlatform.Infrastructure.Services;
 using PaparaDigitalProductPlatform.Persistance;
+using PaparaDigitalProductPlatform.Persistance.Repositories;
 
 namespace PaparaDigitalProductPlatform.Api
 {
@@ -17,7 +21,17 @@ namespace PaparaDigitalProductPlatform.Api
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            // Diğer servis eklemeleri...
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<ICouponRepository, CouponRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICouponService, CouponService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             services.AddControllers();
             services.AddSwaggerGen();

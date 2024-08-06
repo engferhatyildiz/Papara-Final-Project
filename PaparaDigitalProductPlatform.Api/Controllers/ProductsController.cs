@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Services;
+using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Api.Controllers;
 
@@ -41,6 +42,13 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetByCategory(int categoryId)
     {
         var products = await _productService.GetProductsByCategory(categoryId);
+        return Ok(products);
+    }
+    
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Product>>> GetAll()
+    {
+        var products = await _productService.GetAllAsync();
         return Ok(products);
     }
 }

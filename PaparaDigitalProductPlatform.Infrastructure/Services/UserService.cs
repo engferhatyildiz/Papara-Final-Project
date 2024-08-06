@@ -40,17 +40,19 @@ public class UserService : IUserService
     public async Task UpdateUser(UserUpdateDto userUpdateDto)
     {
         var user = await _userRepository.GetByIdAsync(userUpdateDto.Id);
-        if (user != null)
-        {
-            user.FirstName = userUpdateDto.FirstName;
-            user.LastName = userUpdateDto.LastName;
-            user.Email = userUpdateDto.Email;
-            await _userRepository.UpdateAsync(user);
-        }
+        user.FirstName = userUpdateDto.FirstName;
+        user.LastName = userUpdateDto.LastName;
+        user.Email = userUpdateDto.Email;
+        await _userRepository.UpdateAsync(user);
     }
 
     public async Task DeleteUser(int userId)
     {
         await _userRepository.DeleteAsync(userId);
+    }
+    
+    public async Task<IEnumerable<User>> GetAllAsync()
+    {
+        return await _userRepository.GetAllAsync();
     }
 }

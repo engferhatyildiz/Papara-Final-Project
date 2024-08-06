@@ -9,4 +9,5 @@ public interface IUserService
     Task<User> Login(UserLoginDto userLoginDto);
     Task UpdateUser(UserUpdateDto userUpdateDto);
     Task DeleteUser(int userId);
+    Task<IEnumerable<User>> GetAllAsync();
 }

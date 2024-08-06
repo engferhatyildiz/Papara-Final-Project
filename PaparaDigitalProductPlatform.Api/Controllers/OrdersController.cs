@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Services;
+using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Api.Controllers;
 
@@ -33,6 +34,13 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> GetOrderHistory(int userId)
     {
         var orders = await _orderService.GetOrderHistory(userId);
+        return Ok(orders);
+    }
+    
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Order>>> GetAll()
+    {
+        var orders = await _orderService.GetAllAsync();
         return Ok(orders);
     }
 }

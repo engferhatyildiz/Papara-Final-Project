@@ -34,4 +34,8 @@ public class OrderRepository : IOrderRepository
     {
         return await _context.Orders.Where(o => o.UserId == userId && !o.IsActive).ToListAsync();
     }
+    public async Task<IEnumerable<Order>> GetAllAsync()
+    {
+        return await _context.Orders.ToListAsync();
+    }
 }
