@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Services;
 using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class AdminController : ControllerBase
@@ -27,20 +29,9 @@ namespace PaparaDigitalProductPlatform.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAdmin(UserRegistrationDto userRegistrationDto)
+        public async Task<IActionResult> RegisterAdmin(AdminRegistrationDto adminRegistrationDto)
         {
-            var user = new User
-            {
-                FirstName = userRegistrationDto.FirstName,
-                LastName = userRegistrationDto.LastName,
-                Email = userRegistrationDto.Email,
-                Password = userRegistrationDto.Password, // Hash password in real implementation
-                Role = "Admin",
-                WalletBalance = 0,
-                PointBalance = 0
-            };
-
-            await _userService.Register(userRegistrationDto);
+            var user = await _userService.RegisterAdmin(adminRegistrationDto);
             return Ok(user);
         }
 

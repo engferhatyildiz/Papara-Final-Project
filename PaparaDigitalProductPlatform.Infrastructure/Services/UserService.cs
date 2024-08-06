@@ -31,6 +31,23 @@ public class UserService : IUserService
         return user;
     }
 
+    public async Task<User> RegisterAdmin(AdminRegistrationDto adminRegistrationDto)
+    {
+        var user = new User
+        {
+            FirstName = adminRegistrationDto.FirstName,
+            LastName = adminRegistrationDto.LastName,
+            Email = adminRegistrationDto.Email,
+            Password = adminRegistrationDto.Password, // Hash password in real implementation
+            Role = "Admin",
+            WalletBalance = 0,
+            PointBalance = 0
+        };
+
+        await _userRepository.AddAsync(user);
+        return user;
+    }
+
     public async Task<User> Login(UserLoginDto userLoginDto)
     {
         var user = await _userRepository.GetByEmailAndPasswordAsync(userLoginDto.Email, userLoginDto.Password);
@@ -50,7 +67,7 @@ public class UserService : IUserService
     {
         await _userRepository.DeleteAsync(userId);
     }
-    
+
     public async Task<IEnumerable<User>> GetAllAsync()
     {
         return await _userRepository.GetAllAsync();
