@@ -6,6 +6,7 @@ using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Controllers
 {
+    [NonController]
     [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]

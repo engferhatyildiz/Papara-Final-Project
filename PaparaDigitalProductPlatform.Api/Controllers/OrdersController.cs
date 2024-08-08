@@ -3,7 +3,7 @@ using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Services;
 using PaparaDigitalProductPlatform.Domain.Entities;
 
-namespace PaparaDigitalProductPlatform.Api.Controllers;
+namespace PaparaDigitalProductPlatform.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
