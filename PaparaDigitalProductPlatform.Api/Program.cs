@@ -1,5 +1,6 @@
-﻿using PaparaDigitalProductPlatform;
-using PaparaDigitalProductPlatform.Persistence;
+﻿using PaparaDigitalProductPlatform.Persistence;
+
+namespace PaparaDigitalProductPlatform;
 
 public class Program
 {

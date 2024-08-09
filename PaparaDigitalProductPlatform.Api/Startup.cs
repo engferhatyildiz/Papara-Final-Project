@@ -9,6 +9,9 @@ using PaparaDigitalProductPlatform.Domain.Entities;
 using PaparaDigitalProductPlatform.Infrastructure.Services;
 using PaparaDigitalProductPlatform.Persistance;
 using PaparaDigitalProductPlatform.Persistance.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using PaparaDigitalProductPlatform.Validation;
 
 namespace PaparaDigitalProductPlatform;
 
@@ -63,7 +66,11 @@ public class Startup
         services.AddScoped<ICouponService, CouponService>();
         services.AddScoped<ITokenService, TokenService>();
 
-        services.AddControllers();
+        services.AddControllers()
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+        
+        
+
 
         // Swagger Configuration with JWT
         services.AddSwaggerGen(c =>
@@ -72,7 +79,8 @@ public class Startup
 
             var securitySchema = new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                Description =
+                    "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.Http,
@@ -108,10 +116,7 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
         app.UseSwagger();
         app.UseSwaggerUI(c =>

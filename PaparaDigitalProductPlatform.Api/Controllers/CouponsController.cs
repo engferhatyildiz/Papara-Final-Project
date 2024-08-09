@@ -16,7 +16,7 @@ public class CouponsController : ControllerBase
         _couponService = couponService;
     }
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CouponDto couponDto)
     {
@@ -31,7 +31,7 @@ public class CouponsController : ControllerBase
         return Ok(coupons);
     }
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

@@ -46,7 +46,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             return Ok(new { Token = token });
         }
         
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UserUpdateDto userUpdateDto)
         {
@@ -54,7 +54,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -62,7 +62,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {

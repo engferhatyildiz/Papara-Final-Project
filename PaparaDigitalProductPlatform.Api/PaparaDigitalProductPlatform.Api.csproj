@@ -8,28 +8,30 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="11.9.2" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-preview.6.24327.4"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-preview.6.24327.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0-preview.6.24327.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0-preview.6.24327.4"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0-preview.6.24327.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0-preview.6.24327.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Serilog" Version="4.0.2-dev-02220"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Serilog" Version="4.0.2-dev-02220" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\PaparaDigitalProductPlatform.Application\PaparaDigitalProductPlatform.Application.csproj"/>
-        <ProjectReference Include="..\PaparaDigitalProductPlatform.Domain\PaparaDigitalProductPlatform.Domain.csproj"/>
-        <ProjectReference Include="..\PaparaDigitalProductPlatform.Infrastructure\PaparaDigitalProductPlatform.Infrastructure.csproj"/>
-        <ProjectReference Include="..\PaparaDigitalProductPlatform.Persistence\PaparaDigitalProductPlatform.Persistence.csproj"/>
+        <ProjectReference Include="..\PaparaDigitalProductPlatform.Application\PaparaDigitalProductPlatform.Application.csproj" />
+        <ProjectReference Include="..\PaparaDigitalProductPlatform.Domain\PaparaDigitalProductPlatform.Domain.csproj" />
+        <ProjectReference Include="..\PaparaDigitalProductPlatform.Infrastructure\PaparaDigitalProductPlatform.Infrastructure.csproj" />
+        <ProjectReference Include="..\PaparaDigitalProductPlatform.Persistence\PaparaDigitalProductPlatform.Persistence.csproj" />
     </ItemGroup>
 
     <ItemGroup>
