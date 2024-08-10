@@ -7,4 +7,6 @@ public class Coupon
     public decimal Amount { get; set; }
     public DateTime ExpiryDate { get; set; }
     public bool IsActive { get; set; }
+    
+    public int UsageCount { get; set; } = 0;
 }

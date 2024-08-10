@@ -68,6 +68,9 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Coupons");
@@ -162,6 +165,9 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -191,15 +197,12 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("PointBalance")
+                    b.Property<decimal>("Points")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("WalletBalance")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

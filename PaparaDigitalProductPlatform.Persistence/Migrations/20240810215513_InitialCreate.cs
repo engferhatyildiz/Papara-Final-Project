@@ -35,7 +35,8 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    UsageCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,6 +71,7 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
                     PointRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MaxPoint = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
@@ -90,8 +92,7 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WalletBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PointBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Points = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {

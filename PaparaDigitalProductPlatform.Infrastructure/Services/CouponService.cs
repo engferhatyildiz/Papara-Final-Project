@@ -30,7 +30,8 @@ public class CouponService : ICouponService
             Code = couponDto.Code,
             Amount = couponDto.Amount,
             ExpiryDate = couponDto.ExpiryDate,
-            IsActive = true
+            IsActive = true,
+            UsageCount = 0
         };
 
         await _couponRepository.AddAsync(coupon);
@@ -45,5 +46,20 @@ public class CouponService : ICouponService
     public async Task DeleteCoupon(int couponId)
     {
         await _couponRepository.DeleteAsync(couponId);
+    }
+    
+    public async Task<Coupon> GetByCodeAsync(string code)
+    {
+        return await _couponRepository.GetByCodeAsync(code);
+    }
+
+    public async Task IncreaseUsageCount(int couponId)
+    {
+        var coupon = await _couponRepository.GetByIdAsync(couponId);
+        if (coupon != null)
+        {
+            coupon.UsageCount++;
+            await _couponRepository.UpdateAsync(coupon);
+        }
     }
 }

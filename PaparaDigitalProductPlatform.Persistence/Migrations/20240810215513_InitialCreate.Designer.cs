@@ -12,7 +12,7 @@ using PaparaDigitalProductPlatform.Persistance;
 namespace PaparaDigitalProductPlatform.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240805132044_InitialCreate")]
+    [Migration("20240810215513_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -70,6 +70,9 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -165,6 +168,9 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -194,15 +200,12 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("PointBalance")
+                    b.Property<decimal>("Points")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("WalletBalance")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

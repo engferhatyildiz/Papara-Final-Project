@@ -23,8 +23,7 @@ public class UserService : IUserService
             Email = userRegistrationDto.Email,
             Password = userRegistrationDto.Password, // Hash password in real implementation
             Role = "User",
-            WalletBalance = 0,
-            PointBalance = 0
+            Points = 0
         };
 
         await _userRepository.AddAsync(user);
@@ -40,8 +39,7 @@ public class UserService : IUserService
             Email = adminRegistrationDto.Email,
             Password = adminRegistrationDto.Password, // Hash password in real implementation
             Role = "Admin",
-            WalletBalance = 0,
-            PointBalance = 0
+            Points = 0
         };
 
         await _userRepository.AddAsync(user);

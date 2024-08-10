@@ -8,6 +8,5 @@ public class User
     public string Email { get; set; }
     public string Password { get; set; }
     public string Role { get; set; }
-    public decimal WalletBalance { get; set; }
-    public decimal PointBalance { get; set; }
+    public decimal Points { get; set; }
 }
