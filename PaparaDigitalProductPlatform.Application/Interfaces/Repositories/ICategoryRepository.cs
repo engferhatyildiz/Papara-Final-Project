@@ -9,4 +9,6 @@ public interface ICategoryRepository
     Task UpdateAsync(Category category);
     Task DeleteAsync(int id);
     Task<IEnumerable<Category>> GetAllAsync();
+    
+    Task<bool> ExistsAsync(int categoryId);
 }

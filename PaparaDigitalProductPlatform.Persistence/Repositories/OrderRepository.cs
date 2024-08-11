@@ -25,12 +25,12 @@ public class OrderRepository : IOrderRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Order>> GetActiveByUserIdAsync(int userId)
+    public async Task<List<Order>> GetActiveOrdersByUserIdAsync(int userId)
     {
         return await _context.Orders.Where(o => o.UserId == userId && o.IsActive).ToListAsync();
     }
 
-    public async Task<List<Order>> GetHistoryByUserIdAsync(int userId)
+    public async Task<List<Order>> GetOrderHistoryByUserIdAsync(int userId)
     {
         return await _context.Orders.Where(o => o.UserId == userId && !o.IsActive).ToListAsync();
     }

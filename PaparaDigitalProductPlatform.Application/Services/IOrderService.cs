@@ -1,12 +1,14 @@
 ﻿using PaparaDigitalProductPlatform.Application.Dtos;
+using PaparaDigitalProductPlatform.Application.Responses;
 using PaparaDigitalProductPlatform.Domain.Entities;
 
-namespace PaparaDigitalProductPlatform.Application.Services;
-
-public interface IOrderService
+namespace PaparaDigitalProductPlatform.Application.Services
 {
-    Task<Order> CreateOrder(OrderDto orderDto);
-    Task<List<Order>> GetActiveOrders(int userId);
-    Task<List<Order>> GetOrderHistory(int userId);
-    Task<IEnumerable<Order>> GetAllAsync();
+    public interface IOrderService
+    {
+        Task<ApiResponse<Order>> CreateOrder(OrderDto orderDto);
+        Task<ApiResponse<List<Order>>> GetActiveOrders(int userId);
+        Task<ApiResponse<List<Order>>> GetOrderHistory(int userId);
+        Task<ApiResponse<List<Order>>> GetAllAsync();
+    }
 }

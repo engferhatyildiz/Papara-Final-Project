@@ -44,5 +44,10 @@ namespace PaparaDigitalProductPlatform.Persistance.Repositories
         {
             return await _context.Categories.ToListAsync();
         }
+
+        public async Task<bool> ExistsAsync(int categoryId)
+        {
+            return await _context.Categories.AnyAsync(c => c.Id == categoryId);
+        }
     }
 }

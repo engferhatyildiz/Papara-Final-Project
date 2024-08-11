@@ -1,46 +1,66 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Services;
-using PaparaDigitalProductPlatform.Domain.Entities;
 
-namespace PaparaDigitalProductPlatform.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class OrdersController : ControllerBase
+namespace PaparaDigitalProductPlatform.Controllers
 {
-    private readonly IOrderService _orderService;
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrdersController : ControllerBase
+    {
+        private readonly IOrderService _orderService;
 
-    public OrdersController(IOrderService orderService)
-    {
-        _orderService = orderService;
-    }
+        public OrdersController(IOrderService orderService)
+        {
+            _orderService = orderService;
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(OrderDto orderDto)
-    {
-        var order = await _orderService.CreateOrder(orderDto);
-        return Ok(order);
-    }
+        [HttpPost]
+        public async Task<IActionResult> Create(OrderDto orderDto)
+        {
+            var response = await _orderService.CreateOrder(orderDto);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
 
-    [HttpGet("active/{userId}")]
-    public async Task<IActionResult> GetActiveOrders(int userId)
-    {
-        var orders = await _orderService.GetActiveOrders(userId);
-        return Ok(orders);
-    }
+            return BadRequest(response); 
+        }
 
-    [HttpGet("history/{userId}")]
-    public async Task<IActionResult> GetOrderHistory(int userId)
-    {
-        var orders = await _orderService.GetOrderHistory(userId);
-        return Ok(orders);
-    }
-    
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Order>>> GetAll()
-    {
-        var orders = await _orderService.GetAllAsync();
-        return Ok(orders);
+        [HttpGet("active/{userId}")]
+        public async Task<IActionResult> GetActiveOrders(int userId)
+        {
+            var response = await _orderService.GetActiveOrders(userId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(response); 
+        }
+
+        [HttpGet("history/{userId}")]
+        public async Task<IActionResult> GetOrderHistory(int userId)
+        {
+            var response = await _orderService.GetOrderHistory(userId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var response = await _orderService.GetAllAsync();
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(response);
+        }
     }
 }

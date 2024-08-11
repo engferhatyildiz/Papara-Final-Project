@@ -1,7 +1,10 @@
-﻿namespace PaparaDigitalProductPlatform.Application.Dtos;
+﻿using System.Text.Json.Serialization;
+
+namespace PaparaDigitalProductPlatform.Application.Dtos;
 
 public class ProductDto
 {
+    [JsonIgnore]
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
@@ -9,4 +12,6 @@ public class ProductDto
     public bool IsActive { get; set; }
     public decimal PointRate { get; set; }
     public decimal MaxPoint { get; set; }
+    
+    public int CategoryId { get; set; }
 }

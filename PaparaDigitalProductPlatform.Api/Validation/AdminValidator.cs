@@ -19,6 +19,7 @@ public class AdminValidator : AbstractValidator<AdminRegistrationDto>
             .NotEmpty().WithMessage("Email boş olamaz.")
             .EmailAddress().WithMessage("Geçerli bir email adresi giriniz.");
 
+        
         RuleFor(user => user.Password)
             .NotEmpty().WithMessage("Şifre boş olamaz.");
     }

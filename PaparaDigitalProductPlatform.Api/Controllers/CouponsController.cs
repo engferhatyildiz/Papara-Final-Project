@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
-using PaparaDigitalProductPlatform.Application.Responses;
 using PaparaDigitalProductPlatform.Application.Services;
-using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Controllers
 {
@@ -44,6 +42,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             {
                 return Ok(response); // Mesajı içerir
             }
+
             return NotFound(response);
         }
 
