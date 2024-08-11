@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
+using PaparaDigitalProductPlatform.Application.Responses;
 using PaparaDigitalProductPlatform.Application.Services;
 using PaparaDigitalProductPlatform.Domain.Entities;
 

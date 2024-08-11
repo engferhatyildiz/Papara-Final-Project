@@ -1,41 +1,75 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
+using PaparaDigitalProductPlatform.Application.Responses;
 using PaparaDigitalProductPlatform.Application.Services;
+using PaparaDigitalProductPlatform.Domain.Entities;
 
-namespace PaparaDigitalProductPlatform.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class CouponsController : ControllerBase
+namespace PaparaDigitalProductPlatform.Controllers
 {
-    private readonly ICouponService _couponService;
-
-    public CouponsController(ICouponService couponService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CouponsController : ControllerBase
     {
-        _couponService = couponService;
-    }
+        private readonly ICouponService _couponService;
 
-    //[Authorize(Roles = "Admin")]
-    [HttpPost]
-    public async Task<IActionResult> Create(CouponDto couponDto)
-    {
-        var coupon = await _couponService.CreateCoupon(couponDto);
-        return Ok(coupon);
-    }
+        public CouponsController(ICouponService couponService)
+        {
+            _couponService = couponService;
+        }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var coupons = await _couponService.GetAllAsync();
-        return Ok(coupons);
-    }
+        [HttpPost]
+        public async Task<IActionResult> Create(CouponDto couponDto)
+        {
+            var response = await _couponService.CreateCoupon(couponDto);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
 
-    //[Authorize(Roles = "Admin")]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        await _couponService.DeleteCoupon(id);
-        return NoContent();
+            return BadRequest(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var response = await _couponService.GetAllAsync();
+            return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = await _couponService.DeleteCoupon(id);
+            if (response.Success)
+            {
+                return Ok(response); // Mesajı içerir
+            }
+            return NotFound(response);
+        }
+
+
+        [HttpGet("{code}")]
+        public async Task<IActionResult> GetByCode(string code)
+        {
+            var response = await _couponService.GetByCodeAsync(code);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(response);
+        }
+
+        [HttpPatch("{id}/increase-usage")]
+        public async Task<IActionResult> IncreaseUsageCount(int id)
+        {
+            var response = await _couponService.IncreaseUsageCount(id);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(response);
+        }
     }
 }
