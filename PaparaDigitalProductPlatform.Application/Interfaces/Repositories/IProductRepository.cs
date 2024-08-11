@@ -11,4 +11,6 @@ public interface IProductRepository
     Task<List<Product>> GetByCategoryAsync(int categoryId);
 
     Task<IEnumerable<Product>> GetAllAsync();
+
+    Task<Product> GetByNameAsync(string name);
 }

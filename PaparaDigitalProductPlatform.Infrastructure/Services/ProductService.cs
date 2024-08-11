@@ -31,7 +31,19 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
                 };
             }
 
-            // Kategori ID geçerliyse, ürünü eklemeye devam edin
+            // Ürün ismi ile aynı ürün olup olmadığını kontrol et
+            var existingProduct = await _productRepository.GetByNameAsync(productDto.Name);
+            if (existingProduct != null)
+            {
+                return new ApiResponse<Product>
+                {
+                    Success = false,
+                    Message = "A product with this name already exists.",
+                    Data = null
+                };
+            }
+
+            // Kategori ID geçerliyse ve ürün ismi benzersizse, ürünü eklemeye devam edin
             var product = new Product
             {
                 Name = productDto.Name,

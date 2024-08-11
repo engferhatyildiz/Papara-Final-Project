@@ -44,8 +44,14 @@ public class UserRepository : IUserRepository
             await _context.SaveChangesAsync();
         }
     }
+
     public async Task<IEnumerable<User>> GetAllAsync()
     {
         return await _context.Users.ToListAsync();
+    }
+
+    public async Task<User> GetByEmailAsync(string email)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 }

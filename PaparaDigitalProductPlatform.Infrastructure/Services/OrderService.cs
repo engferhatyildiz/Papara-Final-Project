@@ -10,16 +10,20 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly ICouponRepository _couponRepository;
 
-        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository)
+        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository, ICouponRepository couponRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _couponRepository = couponRepository;
         }
 
         public async Task<ApiResponse<Order>> CreateOrder(OrderDto orderDto)
         {
             decimal totalAmount = 0;
+            var coupon = await _couponRepository.GetByCodeAsync(orderDto.CouponCode);
+            orderDto.CouponAmount = coupon.Amount;
 
             var orderDetails = new List<OrderDetail>();
             foreach (var detailDto in orderDto.OrderDetails)
@@ -130,7 +134,7 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             {
                 Success = true,
                 Message = "All orders retrieved successfully",
-                Data = orders.ToList() 
+                Data = orders.ToList() // IEnumerable'den List'e dönüştürüyoruz
             };
         }
     }

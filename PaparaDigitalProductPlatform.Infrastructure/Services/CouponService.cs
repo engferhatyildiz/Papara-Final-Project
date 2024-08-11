@@ -22,17 +22,19 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
         public async Task<ApiResponse<Coupon?>> CreateCoupon(CouponDto couponDto)
         {
-            var validationResult = _validator.Validate(couponDto);
-            if (!validationResult.IsValid)
+            // Öncelikle aynı koda sahip bir kuponun olup olmadığını kontrol edelim
+            var existingCoupon = await _couponRepository.GetByCodeAsync(couponDto.Code);
+            if (existingCoupon != null)
             {
                 return new ApiResponse<Coupon?>
                 {
                     Success = false,
-                    Message = "Validation failed",
+                    Message = "A coupon with this code already exists.",
                     Data = null
                 };
             }
-
+            
+            // Yeni kupon oluşturma
             var coupon = new Coupon
             {
                 Code = couponDto.Code,

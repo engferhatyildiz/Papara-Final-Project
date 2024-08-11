@@ -48,4 +48,9 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products.ToListAsync();
     }
+    
+    public async Task<Product> GetByNameAsync(string name)
+    {
+        return await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
+    }
 }

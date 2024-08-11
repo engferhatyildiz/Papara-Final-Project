@@ -17,12 +17,25 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
         public async Task<ApiResponse<User>> Register(UserRegistrationDto userRegistrationDto)
         {
+            // E-posta adresiyle kayıtlı bir kullanıcı olup olmadığını kontrol et
+            var existingUser = await _userRepository.GetByEmailAsync(userRegistrationDto.Email);
+            if (existingUser != null)
+            {
+                return new ApiResponse<User>
+                {
+                    Success = false,
+                    Message = "A user with this email already exists.",
+                    Data = null
+                };
+            }
+
+            // Kullanıcıyı oluşturma işlemi
             var user = new User
             {
                 FirstName = userRegistrationDto.FirstName,
                 LastName = userRegistrationDto.LastName,
                 Email = userRegistrationDto.Email,
-                Password = userRegistrationDto.Password,
+                Password = userRegistrationDto.Password, // Şifreyi hashlemeyi unutmayın
                 Role = "User",
                 Points = 0
             };
@@ -39,6 +52,17 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
         public async Task<ApiResponse<User>> RegisterAdmin(AdminRegistrationDto adminRegistrationDto)
         {
+            var existingUser = await _userRepository.GetByEmailAsync(adminRegistrationDto.Email);
+            if (existingUser != null)
+            {
+                return new ApiResponse<User>
+                {
+                    Success = false,
+                    Message = "A user with this email already exists.",
+                    Data = null
+                };
+            }
+            
             var user = new User
             {
                 FirstName = adminRegistrationDto.FirstName,
