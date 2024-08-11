@@ -58,17 +58,5 @@ namespace PaparaDigitalProductPlatform.Controllers
 
             return NotFound(response);
         }
-
-        [HttpPatch("{id}/increase-usage")]
-        public async Task<IActionResult> IncreaseUsageCount(int id)
-        {
-            var response = await _couponService.IncreaseUsageCount(id);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-
-            return NotFound(response);
-        }
     }
 }

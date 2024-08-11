@@ -1,7 +1,10 @@
-﻿namespace PaparaDigitalProductPlatform.Application.Dtos;
+﻿using System.Text.Json.Serialization;
 
-public class UserUpdateDto
+namespace PaparaDigitalProductPlatform.Application.Dtos;
+
+public class UserUpdateDto : IUserBase
 {
+    [JsonIgnore]
     public int Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }

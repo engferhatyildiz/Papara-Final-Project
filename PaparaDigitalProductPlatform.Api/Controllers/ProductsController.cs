@@ -35,7 +35,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             var response = await _productService.UpdateProduct(productDto);
             if (response.Success)
             {
-                return NoContent();
+                return Ok(response);
             }
 
             return NotFound(response);
@@ -48,7 +48,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             var response = await _productService.DeleteProduct(id);
             if (response.Success)
             {
-                return NoContent();
+                return Ok(response);
             }
 
             return NotFound(response);
