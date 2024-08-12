@@ -53,6 +53,13 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             var totalAmount = CalculateTotalAmount(orderDetails, coupon, orderDto.PointAmount);
             var earnedPoints = CalculateEarnedPoints(orderDetails);
 
+            // Kredi kartı bilgilerini kontrol et ve gerekli ödemeyi gerçekleştir
+            var creditCardValidationResult = ValidateAndProcessCreditCard(orderDto.CreditCardInfo, totalAmount);
+            if (!creditCardValidationResult.Success)
+            {
+                return CreateErrorResponse<Order>(creditCardValidationResult.Message);
+            }
+
             var order = await CreateAndSaveOrder(orderDto, orderDetails, totalAmount, earnedPoints, coupon);
             await UpdateUserPoints(user, orderDto.PointAmount, earnedPoints);
             await UpdateCouponUsage(coupon);
@@ -116,6 +123,34 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
                 var points = detail.Price * detail.Product.PointRate * detail.Quantity;
                 return points > detail.Product.MaxPoint ? detail.Product.MaxPoint : points;
             });
+
+        private ApiResponse<string> ValidateAndProcessCreditCard(CreditCardInfoDto creditCardInfo, decimal amount)
+        {
+            if (!IsValidCreditCard(creditCardInfo))
+            {
+                return CreateErrorResponse<string>("Invalid credit card information.");
+            }
+
+            // Burada gerçek bir ödeme işlemi yerine basit bir simülasyon yapıyoruz
+            if (amount > 0)
+            {
+                // Ödemenin başarıyla gerçekleştiğini simüle ediyoruz
+                return CreateSuccessResponse("Payment processed successfully", "Payment completed.");
+            }
+
+            return CreateErrorResponse<string>("Payment amount must be greater than zero.");
+        }
+
+        private bool IsValidCreditCard(CreditCardInfoDto creditCardInfo)
+        {
+            // Basit kredi kartı doğrulaması
+            return !string.IsNullOrWhiteSpace(creditCardInfo.CardNumber) &&
+                   !string.IsNullOrWhiteSpace(creditCardInfo.ExpiryMonth) &&
+                   !string.IsNullOrWhiteSpace(creditCardInfo.ExpiryYear) &&
+                   !string.IsNullOrWhiteSpace(creditCardInfo.CVV) &&
+                   creditCardInfo.CardNumber.Length == 16 && 
+                   creditCardInfo.CVV.Length == 3;
+        }
 
         private async Task<Order> CreateAndSaveOrder(OrderDto orderDto, List<OrderDetail> orderDetails, decimal totalAmount, decimal earnedPoints, Coupon? coupon)
         {

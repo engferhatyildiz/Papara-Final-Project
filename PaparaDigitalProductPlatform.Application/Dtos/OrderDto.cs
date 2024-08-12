@@ -6,4 +6,6 @@ public class OrderDto
     public List<OrderDetailDto> OrderDetails { get; set; }
     public string? CouponCode { get; set; }
     public decimal? PointAmount { get; set; } 
+    
+    public CreditCardInfoDto CreditCardInfo { get; set; }
 }
