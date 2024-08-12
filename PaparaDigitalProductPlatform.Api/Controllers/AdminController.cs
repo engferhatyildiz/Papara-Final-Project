@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
-using PaparaDigitalProductPlatform.Application.Responses;
 using PaparaDigitalProductPlatform.Application.Services;
-using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Controllers
 {
@@ -28,7 +26,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             _productService = productService;
             _userService = userService;
         }
-        
+
         [HttpPost("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin(AdminRegistrationDto adminRegistrationDto)
         {
@@ -37,21 +35,26 @@ namespace PaparaDigitalProductPlatform.Controllers
             {
                 return Ok(response);
             }
+
             return BadRequest(response);
         }
-        
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<User>>>> GetAll()
+
+        // Users
+
+        [HttpGet("users")]
+        public async Task<IActionResult> GetAllUsers()
         {
             var response = await _userService.GetAllAsync();
             if (response.Success)
             {
                 return Ok(response);
             }
+
             return NotFound(response);
-        }        
-        [HttpPut("{email}")]
-        public async Task<IActionResult> Update(string email, UserDto userDto)
+        }
+
+        [HttpPut("users/{email}")]
+        public async Task<IActionResult> UpdateUser(string email, UserDto userDto)
         {
             var response = await _userService.UpdateUserByEmail(email, userDto);
             if (response.Success)
@@ -62,9 +65,8 @@ namespace PaparaDigitalProductPlatform.Controllers
             return NotFound(response);
         }
 
-
-        [HttpDelete("{email}")]
-        public async Task<IActionResult> Delete(string email)
+        [HttpDelete("users/{email}")]
+        public async Task<IActionResult> DeleteUser(string email)
         {
             var response = await _userService.DeleteUserByEmail(email);
             if (response.Success)
@@ -74,6 +76,7 @@ namespace PaparaDigitalProductPlatform.Controllers
 
             return NotFound(response);
         }
+
 
         // Categories
 

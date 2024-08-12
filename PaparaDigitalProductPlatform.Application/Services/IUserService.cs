@@ -1,8 +1,6 @@
 ﻿using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Responses;
 using PaparaDigitalProductPlatform.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PaparaDigitalProductPlatform.Application.Services
 {

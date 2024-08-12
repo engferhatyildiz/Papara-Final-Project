@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PaparaDigitalProductPlatform.Application.Services;
 using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Infrastructure.Services;

@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PaparaDigitalProductPlatform.Domain.Entities;
 
-using System.Collections.Generic;
-
 namespace PaparaDigitalProductPlatform.Persistance;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
 
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }

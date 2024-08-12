@@ -20,7 +20,7 @@ namespace PaparaDigitalProductPlatform.Validation
                 .EmailAddress().WithMessage("Geçerli bir email adresi giriniz.");
 
             RuleFor(user => user.Password)
-                .NotEmpty().WithMessage("Şifre boş olamaz."); // Sadece kayıt işlemi için gerekli olan kural
+                .NotEmpty().WithMessage("Şifre boş olamaz."); 
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace PaparaDigitalProductPlatform.Domain.Entities;
+﻿using PaparaDigitalProductPlatform.Domain.Entities;
+
+namespace PaparaDigitalProductPlatform.Application.Services;
 
 public interface ITokenService
 {

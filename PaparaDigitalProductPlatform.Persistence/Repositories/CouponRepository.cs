@@ -33,6 +33,7 @@ public class CouponRepository : ICouponRepository
             await _context.SaveChangesAsync();
         }
     }
+
     public async Task<Coupon?> GetByIdAsync(int id)
     {
         return await _context.Coupons.FindAsync(id);

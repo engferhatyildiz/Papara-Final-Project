@@ -1,4 +1,4 @@
-﻿using PaparaDigitalProductPlatform.Persistence;
+﻿using PaparaDigitalProductPlatform.Persistance;
 
 namespace PaparaDigitalProductPlatform;
 

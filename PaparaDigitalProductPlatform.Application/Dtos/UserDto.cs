@@ -1,6 +1,6 @@
 ﻿namespace PaparaDigitalProductPlatform.Application.Dtos;
 
-public class UserDto : IUserBase
+public class UserDto
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

@@ -43,17 +43,18 @@ public class ProductRepository : IProductRepository
     public async Task<List<Product>> GetByCategoryAsync(int categoryId)
     {
         return await _context.Products
-            .Include(p => p.Category) // Kategoriyi dahil ediyoruz
+            .Include(p => p.Category) 
             .Where(p => p.CategoryId == categoryId)
             .ToListAsync();
     }
+
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
         return await _context.Products
-            .Include(p => p.Category) // Kategoriyi dahil ediyoruz
+            .Include(p => p.Category) 
             .ToListAsync();
     }
-    
+
     public async Task<Product> GetByNameAsync(string name)
     {
         return await _context.Products.FirstOrDefaultAsync(p => p.Name == name);

@@ -1,6 +1,7 @@
 ﻿using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Interfaces.Repositories;
 using PaparaDigitalProductPlatform.Application.Responses;
+using PaparaDigitalProductPlatform.Application.Services;
 using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Infrastructure.Services
