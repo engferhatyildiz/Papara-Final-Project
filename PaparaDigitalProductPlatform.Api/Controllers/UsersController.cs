@@ -22,9 +22,9 @@ namespace PaparaDigitalProductPlatform.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserRegistrationDto userRegistrationDto)
+        public async Task<IActionResult> Register(UserDto userDto)
         {
-            var response = await _userService.Register(userRegistrationDto);
+            var response = await _userService.Register(userDto);
             if (response.Success)
             {
                 return Ok(response);
@@ -67,39 +67,44 @@ namespace PaparaDigitalProductPlatform.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, UserUpdateDto userUpdateDto)
+        [HttpPut("{email}")]
+        public async Task<IActionResult> Update(string email, UserDto userDto)
         {
-            userUpdateDto.Id = id;
-
-            var response = await _userService.UpdateUser(userUpdateDto);
-    
-            if (!response.Success)
-            {
-                if (response.Message == "User not found")
-                {
-                    return NotFound(response); 
-                }
-
-                return BadRequest(response); 
-            }
-
-            return Ok(response);
-        }
-
-
-        //[Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var response = await _userService.DeleteUser(id);
+            var response = await _userService.UpdateUserByEmail(email, userDto);
             if (response.Success)
             {
                 return Ok(response);
             }
+
             return NotFound(response);
         }
 
+
+        //[Authorize(Roles = "Admin")]
+        [HttpDelete("{email}")]
+        public async Task<IActionResult> Delete(string email)
+        {
+            var response = await _userService.DeleteUserByEmail(email);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(response);
+        }
+
+        [HttpGet("points")]
+        public async Task<IActionResult> GetUserPointsByEmail([FromQuery] string email)
+        {
+            var response = await _userService.GetUserPointsByEmail(email);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(response);
+        }
+        
         //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<User>>>> GetAll()

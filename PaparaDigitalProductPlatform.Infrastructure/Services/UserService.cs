@@ -15,10 +15,10 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             _userRepository = userRepository;
         }
 
-        public async Task<ApiResponse<User>> Register(UserRegistrationDto userRegistrationDto)
+        public async Task<ApiResponse<User>> Register(UserDto userDto)
         {
             // E-posta adresiyle kayıtlı bir kullanıcı olup olmadığını kontrol et
-            var existingUser = await _userRepository.GetByEmailAsync(userRegistrationDto.Email);
+            var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
             if (existingUser != null)
             {
                 return new ApiResponse<User>
@@ -32,10 +32,10 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             // Kullanıcıyı oluşturma işlemi
             var user = new User
             {
-                FirstName = userRegistrationDto.FirstName,
-                LastName = userRegistrationDto.LastName,
-                Email = userRegistrationDto.Email,
-                Password = userRegistrationDto.Password, // Şifreyi hashlemeyi unutmayın
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                Email = userDto.Email,
+                Password = userDto.Password, // Şifreyi hashlemeyi unutmayın
                 Role = "User",
                 Points = 0
             };
@@ -104,24 +104,39 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             };
         }
 
-        public async Task<ApiResponse<string>> UpdateUser(UserUpdateDto userUpdateDto)
+
+        public async Task<ApiResponse<string>> UpdateUserByEmail(string email, UserDto userDto)
         {
-            // Öncelikle kullanıcının var olup olmadığını kontrol edin
-            var user = await _userRepository.GetByIdAsync(userUpdateDto.Id);
+            var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
             {
                 return new ApiResponse<string>
                 {
                     Success = false,
-                    Message = "User not found", // Kullanıcı bulunamadı mesajı
+                    Message = "User not found",
                     Data = null
                 };
             }
 
-            // Kullanıcı bulunduysa güncelleme işlemlerini yap
-            user.FirstName = userUpdateDto.FirstName;
-            user.LastName = userUpdateDto.LastName;
-            user.Email = userUpdateDto.Email;
+            // Yeni email ile başka bir kullanıcı var mı kontrol et
+            if (!string.Equals(email, userDto.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
+                if (existingUser != null)
+                {
+                    return new ApiResponse<string>
+                    {
+                        Success = false,
+                        Message = "A user with this email already exists.",
+                        Data = null
+                    };
+                }
+            }
+
+            user.FirstName = userDto.FirstName;
+            user.LastName = userDto.LastName;
+            user.Email = userDto.Email; // Email güncelleniyor
+            user.Password = userDto.Password; // Password değişikliği şifreleme işlemiyle beraber yapılmalıdır
 
             await _userRepository.UpdateAsync(user);
 
@@ -133,9 +148,9 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             };
         }
 
-        public async Task<ApiResponse<string>> DeleteUser(int userId)
+        public async Task<ApiResponse<string>> DeleteUserByEmail(string email)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
             {
                 return new ApiResponse<string>
@@ -146,13 +161,34 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
                 };
             }
 
-            await _userRepository.DeleteAsync(userId);
+            await _userRepository.DeleteAsync(user.Id);
 
             return new ApiResponse<string>
             {
                 Success = true,
                 Message = "User deleted successfully",
                 Data = null
+            };
+        }
+        
+        public async Task<ApiResponse<decimal>> GetUserPointsByEmail(string email)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null)
+            {
+                return new ApiResponse<decimal>
+                {
+                    Success = false,
+                    Message = "User not found",
+                    Data = 0
+                };
+            }
+
+            return new ApiResponse<decimal>
+            {
+                Success = true,
+                Message = "User points retrieved successfully",
+                Data = user.Points
             };
         }
 
