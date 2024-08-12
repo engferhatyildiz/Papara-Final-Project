@@ -20,7 +20,9 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
         public async Task<ApiResponse<Product>> AddProduct(ProductDto productDto)
         {
             // Öncelikle categoryId'nin geçerli olup olmadığını kontrol edelim
-            var categoryExists = await _categoryRepository.ExistsAsync(productDto.CategoryId);
+            // Kategori adı üzerinden kontrol yapın
+            var categoryExists = await _categoryRepository.ExistsAsync(productDto.Name); // CategoryId yerine CategoryName'i kontrol edin
+
             if (!categoryExists)
             {
                 return new ApiResponse<Product>

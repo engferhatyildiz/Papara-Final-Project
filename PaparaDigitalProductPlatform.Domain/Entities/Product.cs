@@ -16,9 +16,6 @@ public class Product
     public decimal MaxPoint { get; set; }
     
     public int CategoryId { get; set; } 
-    
-    [NotMapped]
-    public string CategoryName { get; set; }
     public Category Category { get; set; }
     
     public ICollection<OrderDetail> OrderDetails { get; set; }

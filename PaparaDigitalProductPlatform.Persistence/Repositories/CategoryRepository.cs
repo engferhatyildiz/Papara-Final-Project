@@ -13,20 +13,11 @@ namespace PaparaDigitalProductPlatform.Persistance.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(Category category)
+        public async Task<Category> AddAsync(Category category)
         {
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<Category> GetByIdAsync(int id)
-        {
-            return await _context.Categories.FindAsync(id);
-        }
-        
-        public async Task<Category> GetByNameAsync(string name)
-        {
-            return await _context.Categories.FirstOrDefaultAsync(p => p.Name == name);
+            return category;
         }
 
         public async Task UpdateAsync(Category category)
@@ -35,24 +26,33 @@ namespace PaparaDigitalProductPlatform.Persistance.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Category category)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
-            }
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync()
+        public async Task<Category?> GetByNameAsync(string name)
+        {
+            return await _context.Categories
+                .FirstOrDefaultAsync(c => c.Name == name);
+        }
+
+        public async Task<List<Category>> GetAllAsync()
         {
             return await _context.Categories.ToListAsync();
         }
 
-        public async Task<bool> ExistsAsync(int categoryId)
+        public async Task<bool> ExistsAsync(string name)
         {
-            return await _context.Categories.AnyAsync(c => c.Id == categoryId);
+            return await _context.Categories
+                .AnyAsync(c => c.Name == name);
+        }
+
+        public async Task<bool> HasProductsAsync(int categoryId)
+        {
+            // Kategoriye bağlı ürünlerin var olup olmadığını kontrol ediyoruz
+            return await _context.Products.AnyAsync(p => p.CategoryId == categoryId);
         }
     }
 }
