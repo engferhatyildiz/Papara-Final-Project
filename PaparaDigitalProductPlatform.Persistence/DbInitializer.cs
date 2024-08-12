@@ -15,7 +15,9 @@ namespace PaparaDigitalProductPlatform.Persistence
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<ApplicationDbContext>();
-                context.Database.EnsureCreated();
+
+                // Eğer migration ile çalışıyorsanız, bu kısmı comment'leyebilirsiniz
+                // context.Database.EnsureCreated();
 
                 if (!context.Categories.Any())
                 {
@@ -79,13 +81,14 @@ namespace PaparaDigitalProductPlatform.Persistence
                         new Coupon { Code = "WIN10OFF", Amount = 10, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
                         new Coupon { Code = "WIN11OFF", Amount = 15, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
                         new Coupon { Code = "OFFICE19OFF", Amount = 20, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
-                        new Coupon { Code = "OFFICE21OFF", Amount = 25, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
-                        new Coupon { Code = "ADOBE10OFF", Amount = 10, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
-                        new Coupon { Code = "COREL15OFF", Amount = 15, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
-                        new Coupon { Code = "ANTIVIRUS5OFF", Amount = 5, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 }
+                        new Coupon { Code = "OFFICE21", Amount = 25, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
+                        new Coupon { Code = "ADOBE10", Amount = 10, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
+                        new Coupon { Code = "COREL15F", Amount = 15, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 },
+                        new Coupon { Code = "ANTIOFF", Amount = 5, ExpiryDate = DateTime.UtcNow.AddMonths(1), IsActive = true, UsageCount = 0 }
                     );
                     context.SaveChanges();
                 }
+                
             }
         }
     }

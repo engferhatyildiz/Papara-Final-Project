@@ -12,7 +12,7 @@ using PaparaDigitalProductPlatform.Persistance;
 namespace PaparaDigitalProductPlatform.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240810215513_InitialCreate")]
+    [Migration("20240812154931_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -91,11 +91,16 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("CouponCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("EarnedPoints")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("PointAmount")
                         .HasColumnType("decimal(18,2)");
@@ -126,6 +131,9 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -172,6 +180,8 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -229,6 +239,22 @@ namespace PaparaDigitalProductPlatform.Persistance.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("PaparaDigitalProductPlatform.Domain.Entities.Product", b =>
+                {
+                    b.HasOne("PaparaDigitalProductPlatform.Domain.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("PaparaDigitalProductPlatform.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("PaparaDigitalProductPlatform.Domain.Entities.Order", b =>
