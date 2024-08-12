@@ -1,23 +1,18 @@
-﻿using FluentValidation;
-using PaparaDigitalProductPlatform.Application.Dtos;
+﻿using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Interfaces.Repositories;
 using PaparaDigitalProductPlatform.Application.Responses;
-using PaparaDigitalProductPlatform.Domain.Entities;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using PaparaDigitalProductPlatform.Application.Services;
+using PaparaDigitalProductPlatform.Domain.Entities;
 
 namespace PaparaDigitalProductPlatform.Infrastructure.Services
 {
     public class CouponService : ICouponService
     {
         private readonly ICouponRepository _couponRepository;
-        private readonly IValidator<CouponDto> _validator;
 
-        public CouponService(ICouponRepository couponRepository, IValidator<CouponDto> validator)
+        public CouponService(ICouponRepository couponRepository)
         {
             _couponRepository = couponRepository;
-            _validator = validator;
         }
 
         public async Task<ApiResponse<Coupon?>> CreateCoupon(CouponDto couponDto)
@@ -33,7 +28,7 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
                     Data = null
                 };
             }
-            
+
             // Yeni kupon oluşturma
             var coupon = new Coupon
             {
@@ -65,12 +60,13 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             };
         }
 
-        public async Task<ApiResponse<string?>> DeleteCoupon(int couponId)
+        // Coupon'u kod üzerinden silme işlemi
+        public async Task<ApiResponse<string>> DeleteCoupon(string couponCode)
         {
-            var coupon = await _couponRepository.GetByIdAsync(couponId);
+            var coupon = await _couponRepository.GetByCodeAsync(couponCode);
             if (coupon == null)
             {
-                return new ApiResponse<string?>
+                return new ApiResponse<string>
                 {
                     Success = false,
                     Message = "Coupon not found",
@@ -78,9 +74,9 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
                 };
             }
 
-            await _couponRepository.DeleteAsync(couponId);
+            await _couponRepository.DeleteAsync(coupon.Id);
 
-            return new ApiResponse<string?>
+            return new ApiResponse<string>
             {
                 Success = true,
                 Message = "Coupon has been successfully deleted.",
@@ -110,12 +106,18 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             };
         }
 
-        public async Task<ApiResponse<string>> IncreaseUsageCount(int couponId)
+        public Task<ApiResponse<string>> IncreaseUsageCount(int couponId)
         {
-            var coupon = await _couponRepository.GetByIdAsync(couponId);
+            throw new NotImplementedException();
+        }
+
+
+        public async Task<ApiResponse<bool?>> GetCouponStatusAsync(string code)
+        {
+            var coupon = await _couponRepository.GetByCodeAsync(code);
             if (coupon == null)
             {
-                return new ApiResponse<string>
+                return new ApiResponse<bool?>
                 {
                     Success = false,
                     Message = "Coupon not found",
@@ -123,15 +125,41 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
                 };
             }
 
-            coupon.UsageCount++;
-            await _couponRepository.UpdateAsync(coupon);
-
-            return new ApiResponse<string>
+            return new ApiResponse<bool?>
             {
                 Success = true,
-                Message = "Usage count increased successfully",
-                Data = null
+                Message = "Coupon status retrieved successfully",
+                Data = coupon.IsActive
             };
         }
+        
+        public async Task<ApiResponse<Coupon?>> UpdateCouponAsync(string code, CouponDto couponDto)
+        {
+            var coupon = await _couponRepository.GetByCodeAsync(code);
+            if (coupon == null)
+            {
+                return new ApiResponse<Coupon?>
+                {
+                    Success = false,
+                    Message = "Coupon not found",
+                    Data = null
+                };
+            }
+
+            coupon.Amount = couponDto.Amount;
+            coupon.ExpiryDate = couponDto.ExpiryDate;
+            coupon.IsActive = couponDto.IsActive;
+
+            await _couponRepository.UpdateAsync(coupon);
+
+            return new ApiResponse<Coupon?>
+            {
+                Success = true,
+                Message = "Coupon updated successfully",
+                Data = coupon
+            };
+        }
+
+
     }
 }

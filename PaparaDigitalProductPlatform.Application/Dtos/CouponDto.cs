@@ -6,5 +6,6 @@ public class CouponDto
     public decimal Amount { get; set; }
     public DateTime ExpiryDate { get; set; }
     
-    public int UsageCount { get; set; } = 0;
+    public bool IsActive { get; set; }
+    
 }

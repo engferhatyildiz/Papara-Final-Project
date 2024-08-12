@@ -27,8 +27,9 @@ namespace PaparaDigitalProductPlatform.Validation
             RuleFor(x => x.MaxPoint)
                 .GreaterThan(0).WithMessage("Max point must be greater than or equal to zero.");
 
-            RuleFor(x => x.CategoryId)
-                .GreaterThan(0).WithMessage("Category ID must be greater than zero.");
+            
+            RuleFor(product => product.Stock)
+                .GreaterThanOrEqualTo(0).WithMessage("Stock cannot be negative.");
         }
     }
 }
