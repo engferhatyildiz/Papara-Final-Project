@@ -65,7 +65,6 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             };
         }
 
-
         public async Task<ApiResponse<string>> UpdateProduct(ProductDto productDto)
         {
             var product = await _productRepository.GetByIdAsync(productDto.Id);
@@ -80,6 +79,36 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             }
 
             product.Name = productDto.Name;
+            product.Description = productDto.Description;
+            product.Price = productDto.Price;
+            product.IsActive = productDto.IsActive;
+            product.PointRate = productDto.PointRate;
+            product.MaxPoint = productDto.MaxPoint;
+            product.CategoryId = productDto.CategoryId;
+
+            await _productRepository.UpdateAsync(product);
+
+            return new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Product updated successfully",
+                Data = null
+            };
+        }
+
+        public async Task<ApiResponse<string>> UpdateProductByName(ProductDto productDto)
+        {
+            var product = await _productRepository.GetByNameAsync(productDto.Name);
+            if (product == null)
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "Product not found",
+                    Data = null
+                };
+            }
+
             product.Description = productDto.Description;
             product.Price = productDto.Price;
             product.IsActive = productDto.IsActive;
@@ -120,9 +149,64 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             };
         }
 
+        public async Task<ApiResponse<string>> DeleteProductByName(string name)
+        {
+            var product = await _productRepository.GetByNameAsync(name);
+            if (product == null)
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "Product not found",
+                    Data = null
+                };
+            }
+
+            await _productRepository.DeleteAsync(product.Id);
+
+            return new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Product deleted successfully",
+                Data = null
+            };
+        }
+
         public async Task<ApiResponse<List<Product>>> GetProductsByCategory(int categoryId)
         {
             var products = await _productRepository.GetByCategoryAsync(categoryId);
+            if (products == null || products.Count == 0)
+            {
+                return new ApiResponse<List<Product>>
+                {
+                    Success = false,
+                    Message = "No products found for the given category",
+                    Data = null
+                };
+            }
+
+            return new ApiResponse<List<Product>>
+            {
+                Success = true,
+                Message = "Products retrieved successfully",
+                Data = products
+            };
+        }
+
+        public async Task<ApiResponse<List<Product>>> GetProductsByCategoryName(string categoryName)
+        {
+            var category = await _categoryRepository.GetByNameAsync(categoryName);
+            if (category == null)
+            {
+                return new ApiResponse<List<Product>>
+                {
+                    Success = false,
+                    Message = "Category not found",
+                    Data = null
+                };
+            }
+
+            var products = await _productRepository.GetByCategoryAsync(category.Id);
             if (products == null || products.Count == 0)
             {
                 return new ApiResponse<List<Product>>

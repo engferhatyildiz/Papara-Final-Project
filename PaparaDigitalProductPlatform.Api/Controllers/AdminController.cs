@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿/*
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PaparaDigitalProductPlatform.Application.Dtos;
 using PaparaDigitalProductPlatform.Application.Responses;
@@ -101,3 +102,5 @@ namespace PaparaDigitalProductPlatform.Controllers
         }
     }
 }
+
+*/

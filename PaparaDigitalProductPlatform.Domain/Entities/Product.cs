@@ -1,4 +1,7 @@
-﻿namespace PaparaDigitalProductPlatform.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
+namespace PaparaDigitalProductPlatform.Domain.Entities;
 
 public class Product
 {
@@ -11,7 +14,12 @@ public class Product
     public int Stock { get; set; }
     public decimal PointRate { get; set; }
     public decimal MaxPoint { get; set; }
-    public int CategoryId { get; set; }
+    
+    public int CategoryId { get; set; } 
+    
+    [NotMapped]
+    public string CategoryName { get; set; }
+    public Category Category { get; set; }
     
     public ICollection<OrderDetail> OrderDetails { get; set; }
 }

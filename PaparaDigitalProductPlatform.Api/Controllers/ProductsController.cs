@@ -29,10 +29,11 @@ namespace PaparaDigitalProductPlatform.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ProductDto productDto)
+        [HttpPut("{name}")]
+        public async Task<IActionResult> Update(string name, ProductDto productDto)
         {
-            var response = await _productService.UpdateProduct(productDto);
+            productDto.Name = name; // DTO'ya ad değeri atayın
+            var response = await _productService.UpdateProductByName(productDto);
             if (response.Success)
             {
                 return Ok(response);
@@ -42,10 +43,10 @@ namespace PaparaDigitalProductPlatform.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("{name}")]
+        public async Task<IActionResult> Delete(string name)
         {
-            var response = await _productService.DeleteProduct(id);
+            var response = await _productService.DeleteProductByName(name);
             if (response.Success)
             {
                 return Ok(response);
@@ -54,10 +55,10 @@ namespace PaparaDigitalProductPlatform.Controllers
             return NotFound(response);
         }
 
-        [HttpGet("category/{categoryId}")]
-        public async Task<IActionResult> GetByCategory(int categoryId)
+        [HttpGet("category/{categoryName}")]
+        public async Task<IActionResult> GetByCategory(string categoryName)
         {
-            var response = await _productService.GetProductsByCategory(categoryId);
+            var response = await _productService.GetProductsByCategoryName(categoryName);
             if (response.Success)
             {
                 return Ok(response);

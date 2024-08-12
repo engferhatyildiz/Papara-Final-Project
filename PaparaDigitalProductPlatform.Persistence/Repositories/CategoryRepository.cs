@@ -23,6 +23,11 @@ namespace PaparaDigitalProductPlatform.Persistance.Repositories
         {
             return await _context.Categories.FindAsync(id);
         }
+        
+        public async Task<Category> GetByNameAsync(string name)
+        {
+            return await _context.Categories.FirstOrDefaultAsync(p => p.Name == name);
+        }
 
         public async Task UpdateAsync(Category category)
         {

@@ -42,11 +42,16 @@ public class ProductRepository : IProductRepository
 
     public async Task<List<Product>> GetByCategoryAsync(int categoryId)
     {
-        return await _context.Products.Where(p => p.CategoryId == categoryId).ToListAsync();
+        return await _context.Products
+            .Include(p => p.Category) // Kategoriyi dahil ediyoruz
+            .Where(p => p.CategoryId == categoryId)
+            .ToListAsync();
     }
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        return await _context.Products.ToListAsync();
+        return await _context.Products
+            .Include(p => p.Category) // Kategoriyi dahil ediyoruz
+            .ToListAsync();
     }
     
     public async Task<Product> GetByNameAsync(string name)

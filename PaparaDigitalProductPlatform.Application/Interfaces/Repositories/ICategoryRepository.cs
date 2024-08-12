@@ -11,4 +11,6 @@ public interface ICategoryRepository
     Task<IEnumerable<Category>> GetAllAsync();
     
     Task<bool> ExistsAsync(int categoryId);
+    
+    Task<Category> GetByNameAsync(string name);
 }

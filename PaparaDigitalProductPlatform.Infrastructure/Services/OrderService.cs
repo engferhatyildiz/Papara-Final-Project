@@ -51,7 +51,7 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             }
 
             totalAmount -= orderDto.CouponAmount;
-            totalAmount -= orderDto.PointAmount;
+            totalAmount -= orderDto.PointAmount ?? 0;
 
             var order = new Order
             {
@@ -60,7 +60,7 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
                 TotalAmount = totalAmount,
                 CouponAmount = orderDto.CouponAmount,
                 CouponCode = orderDto.CouponCode,
-                PointAmount = orderDto.PointAmount,
+                PointAmount = orderDto.PointAmount ?? 0,
                 OrderDetails = orderDetails
             };
 
