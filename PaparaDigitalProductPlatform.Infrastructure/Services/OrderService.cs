@@ -13,220 +13,172 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
         private readonly ICouponRepository _couponRepository;
         private readonly IUserRepository _userRepository;
 
-        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository,
-            ICouponRepository couponRepository, IUserRepository userRepository)
+        public OrderService(
+            IOrderRepository orderRepository, 
+            IProductRepository productRepository,
+            ICouponRepository couponRepository, 
+            IUserRepository userRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
             _couponRepository = couponRepository;
             _userRepository = userRepository;
         }
-        
-public async Task<ApiResponse<Order>> CreateOrder(OrderDto orderDto)
-{
-    // Toplam miktar ve kazanılan puanları tutacak değişkenler
-    decimal totalAmount = 0;
-    decimal earnedPoints = 0;
-    Coupon? coupon = null;
 
-    // Kupon kodu varsa kontrol et
-    if (!string.IsNullOrEmpty(orderDto.CouponCode))
-    {
-        coupon = await _couponRepository.GetByCodeAsync(orderDto.CouponCode);
-        if (coupon == null || !coupon.IsActive || coupon.UsageCount > 0)
+        public async Task<ApiResponse<Order>> CreateOrder(OrderDto orderDto)
         {
-            return new ApiResponse<Order>
+            var coupon = await ValidateCoupon(orderDto.CouponCode);
+            if (coupon == null && !string.IsNullOrEmpty(orderDto.CouponCode))
             {
-                Success = false,
-                Message = "Invalid or inactive coupon code",
-                Data = null
-            };
-        }
-    }
+                return CreateErrorResponse<Order>("Invalid or inactive coupon code");
+            }
 
-    // Kullanıcıyı getir ve kontrol et
-    var user = await _userRepository.GetByIdAsync(orderDto.UserId);
-    if (user == null)
-    {
-        return new ApiResponse<Order>
-        {
-            Success = false,
-            Message = "User not found",
-            Data = null
-        };
-    }
-
-    // Kullanıcının yeterli puanı olup olmadığını kontrol et
-    if (orderDto.PointAmount > user.Points)
-    {
-        return new ApiResponse<Order>
-        {
-            Success = false,
-            Message = "Insufficient points",
-            Data = null
-        };
-    }
-
-    // Sipariş detaylarını oluştur
-    var orderDetails = new List<OrderDetail>();
-    foreach (var detailDto in orderDto.OrderDetails)
-    {
-        var product = await _productRepository.GetByIdAsync(detailDto.ProductId);
-        if (product == null)
-        {
-            return new ApiResponse<Order>
+            var user = await _userRepository.GetByIdAsync(orderDto.UserId);
+            if (user == null)
             {
-                Success = false,
-                Message = $"Product with ID {detailDto.ProductId} not found",
-                Data = null
-            };
-        }
+                return CreateErrorResponse<Order>("User not found");
+            }
 
-        // Stok kontrolü yap
-        if (product.Stock < detailDto.Quantity)
-        {
-            return new ApiResponse<Order>
+            if (!HasSufficientPoints(user, orderDto.PointAmount))
             {
-                Success = false,
-                Message = $"Insufficient stock for product: {product.Name}",
-                Data = null
+                return CreateErrorResponse<Order>("Insufficient points");
+            }
+
+            var orderDetails = await CreateOrderDetails(orderDto);
+            if (orderDetails == null)
+            {
+                return CreateErrorResponse<Order>("Order creation failed due to product issues");
+            }
+
+            var totalAmount = CalculateTotalAmount(orderDetails, coupon, orderDto.PointAmount);
+            var earnedPoints = CalculateEarnedPoints(orderDetails);
+
+            var order = await CreateAndSaveOrder(orderDto, orderDetails, totalAmount, earnedPoints, coupon);
+            await UpdateUserPoints(user, orderDto.PointAmount, earnedPoints);
+            await UpdateCouponUsage(coupon);
+
+            return CreateSuccessResponse(order, "Order created successfully");
+        }
+
+        private async Task<Coupon?> ValidateCoupon(string couponCode)
+        {
+            if (string.IsNullOrEmpty(couponCode)) return null;
+            var coupon = await _couponRepository.GetByCodeAsync(couponCode);
+            return coupon?.IsActive == true && coupon.UsageCount == 0 ? coupon : null;
+        }
+
+        private bool HasSufficientPoints(User user, decimal? pointAmount) => pointAmount <= user.Points;
+
+        private async Task<List<OrderDetail>?> CreateOrderDetails(OrderDto orderDto)
+        {
+            var orderDetails = new List<OrderDetail>();
+            foreach (var detailDto in orderDto.OrderDetails)
+            {
+                var product = await _productRepository.GetByIdAsync(detailDto.ProductId);
+                if (product == null || !HasSufficientStock(product, detailDto.Quantity))
+                {
+                    return null;
+                }
+
+                await UpdateProductStock(product, detailDto.Quantity);
+                orderDetails.Add(CreateOrderDetail(product, detailDto.Quantity));
+            }
+            return orderDetails;
+        }
+
+        private static bool HasSufficientStock(Product product, int quantity) => product.Stock >= quantity;
+
+        private async Task UpdateProductStock(Product product, int quantity)
+        {
+            product.Stock -= quantity;
+            await _productRepository.UpdateAsync(product);
+        }
+
+        private static OrderDetail CreateOrderDetail(Product product, int quantity) =>
+            new OrderDetail
+            {
+                ProductId = product.Id,
+                Price = product.Price,
+                Quantity = quantity,
+                Product = product
             };
+
+        private static decimal CalculateTotalAmount(IEnumerable<OrderDetail> orderDetails, Coupon? coupon, decimal? pointAmount)
+        {
+            var totalAmount = orderDetails.Sum(detail => detail.Price * detail.Quantity);
+            if (coupon != null) totalAmount -= coupon.Amount;
+            return totalAmount - (pointAmount ?? 0);
         }
 
-        // Stok miktarını güncelle
-        product.Stock -= detailDto.Quantity;
-        await _productRepository.UpdateAsync(product);
+        private static decimal CalculateEarnedPoints(IEnumerable<OrderDetail> orderDetails) =>
+            orderDetails.Sum(detail =>
+            {
+                var points = detail.Price * detail.Product.PointRate * detail.Quantity;
+                return points > detail.Product.MaxPoint ? detail.Product.MaxPoint : points;
+            });
 
-        // Sipariş detayını oluştur
-        var orderDetail = new OrderDetail
+        private async Task<Order> CreateAndSaveOrder(OrderDto orderDto, List<OrderDetail> orderDetails, decimal totalAmount, decimal earnedPoints, Coupon? coupon)
         {
-            ProductId = detailDto.ProductId,
-            Price = product.Price,  // Ürün fiyatını direkt olarak ürünün kendisinden alıyoruz
-            Quantity = detailDto.Quantity,
-            Product = product
-        };
+            var order = new Order
+            {
+                UserId = orderDto.UserId,
+                IsActive = true,
+                TotalAmount = totalAmount,
+                CouponAmount = coupon?.Amount ?? 0,
+                CouponCode = coupon?.Code ?? string.Empty,
+                PointAmount = orderDto.PointAmount ?? 0,
+                EarnedPoints = earnedPoints,
+                OrderDate = DateTime.UtcNow.Date,
+                OrderDetails = orderDetails
+            };
 
-        orderDetails.Add(orderDetail);
-        totalAmount += product.Price * detailDto.Quantity;  // Toplam miktarı hesapla
-
-        // Kazanılan puanları hesapla
-        var productPoints = product.Price * product.PointRate * detailDto.Quantity;
-        earnedPoints += productPoints > product.MaxPoint ? product.MaxPoint : productPoints;
-    }
-
-    // Kupon indirimi uygula
-    if (coupon != null)
-    {
-        totalAmount -= coupon.Amount;
-    }
-
-    // Puan indirimi uygula
-    totalAmount -= orderDto.PointAmount ?? 0;
-
-    // Siparişi oluştur
-    var order = new Order
-    {
-        UserId = orderDto.UserId,
-        IsActive = true,
-        TotalAmount = totalAmount,
-        CouponAmount = coupon?.Amount ?? 0,
-        CouponCode = coupon?.Code ?? string.Empty,
-        PointAmount = orderDto.PointAmount ?? 0,
-        EarnedPoints = earnedPoints,
-        OrderDate = DateTime.UtcNow.Date,  // Sadece tarih bilgisi (saat olmadan)
-        OrderDetails = orderDetails
-    };
-
-    // Siparişi veritabanına ekle
-    await _orderRepository.AddAsync(order);
-
-    // Kullanıcı puanlarını güncelle
-    user.Points = user.Points - (orderDto.PointAmount ?? 0) + earnedPoints;
-    await _userRepository.UpdateAsync(user);
-
-    // Kuponun kullanım durumunu güncelle
-    if (coupon != null)
-    {
-        coupon.UsageCount++;
-        if (coupon.UsageCount >= 1)
-        {
-            coupon.IsActive = false;
+            await _orderRepository.AddAsync(order);
+            return order;
         }
-        await _couponRepository.UpdateAsync(coupon);
-    }
 
-    // Başarılı yanıt dön
-    return new ApiResponse<Order>
-    {
-        Success = true,
-        Message = "Order created successfully",
-        Data = order
-    };
-}
+        private async Task UpdateUserPoints(User user, decimal? pointAmount, decimal earnedPoints)
+        {
+            user.Points = user.Points - (pointAmount ?? 0) + earnedPoints;
+            await _userRepository.UpdateAsync(user);
+        }
 
+        private async Task UpdateCouponUsage(Coupon? coupon)
+        {
+            if (coupon == null) return;
+
+            coupon.UsageCount++;
+            if (coupon.UsageCount >= 1) coupon.IsActive = false;
+            await _couponRepository.UpdateAsync(coupon);
+        }
 
         public async Task<ApiResponse<List<Order>>> GetActiveOrders(int userId)
         {
             var orders = await _orderRepository.GetActiveOrdersByUserIdAsync(userId);
-            if (orders == null || orders.Count == 0)
-            {
-                return new ApiResponse<List<Order>>
-                {
-                    Success = false,
-                    Message = "No active orders found",
-                    Data = null
-                };
-            }
-
-            return new ApiResponse<List<Order>>
-            {
-                Success = true,
-                Message = "Active orders retrieved successfully",
-                Data = orders
-            };
+            return orders == null || !orders.Any()
+                ? CreateErrorResponse<List<Order>>("No active orders found")
+                : CreateSuccessResponse(orders, "Active orders retrieved successfully");
         }
 
         public async Task<ApiResponse<List<Order>>> GetOrderHistory(int userId)
         {
             var orders = await _orderRepository.GetOrderHistoryByUserIdAsync(userId);
-            if (orders == null || orders.Count == 0)
-            {
-                return new ApiResponse<List<Order>>
-                {
-                    Success = false,
-                    Message = "No order history found",
-                    Data = null
-                };
-            }
-
-            return new ApiResponse<List<Order>>
-            {
-                Success = true,
-                Message = "Order history retrieved successfully",
-                Data = orders
-            };
+            return orders == null || !orders.Any()
+                ? CreateErrorResponse<List<Order>>("No order history found")
+                : CreateSuccessResponse(orders, "Order history retrieved successfully");
         }
 
         public async Task<ApiResponse<List<Order>>> GetAllAsync()
         {
             var orders = await _orderRepository.GetAllAsync();
-
-            if (orders == null || !orders.Any())
-            {
-                return new ApiResponse<List<Order>>
-                {
-                    Success = false,
-                    Message = "No orders found",
-                    Data = null
-                };
-            }
-
-            return new ApiResponse<List<Order>>
-            {
-                Success = true,
-                Message = "All orders retrieved successfully",
-                Data = orders.ToList() // IEnumerable'den List'e dönüştürüyoruz
-            };
+            return orders == null || !orders.Any()
+                ? CreateErrorResponse<List<Order>>("No orders found")
+                : CreateSuccessResponse(orders.ToList(), "All orders retrieved successfully");
         }
+
+        private static ApiResponse<T> CreateErrorResponse<T>(string message) =>
+            new ApiResponse<T> { Success = false, Message = message, Data = default };
+
+        private static ApiResponse<T> CreateSuccessResponse<T>(T data, string message) =>
+            new ApiResponse<T> { Success = true, Message = message, Data = data };
     }
 }

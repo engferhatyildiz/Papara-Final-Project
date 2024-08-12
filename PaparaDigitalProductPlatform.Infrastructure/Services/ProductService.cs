@@ -19,51 +19,23 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
         public async Task<ApiResponse<Product>> AddProduct(ProductDto productDto)
         {
-            // Öncelikle CategoryName'in geçerli olup olmadığını kontrol edelim
-            var category = await _categoryRepository.GetByNameAsync(productDto.CategoryName);
+            var category = await ValidateCategory(productDto.CategoryName);
             if (category == null)
             {
-                return new ApiResponse<Product>
-                {
-                    Success = false,
-                    Message = "Invalid category name",
-                    Data = null
-                };
+                return CreateErrorResponse<Product>("Invalid category name");
             }
 
-            // Ürün ismi ile aynı ürün olup olmadığını kontrol et
             var existingProduct = await _productRepository.GetByNameAsync(productDto.Name);
             if (existingProduct != null)
             {
-                return new ApiResponse<Product>
-                {
-                    Success = false,
-                    Message = "A product with this name already exists.",
-                    Data = null
-                };
+                return CreateErrorResponse<Product>("A product with this name already exists.");
             }
 
-            // Kategori geçerliyse ve ürün ismi benzersizse, ürünü eklemeye devam edin
-            var product = new Product
-            {
-                Name = productDto.Name,
-                Description = productDto.Description,
-                Price = productDto.Price,
-                IsActive = productDto.IsActive,
-                PointRate = productDto.PointRate,
-                MaxPoint = productDto.MaxPoint,
-                Stock = productDto.Stock,
-                CategoryId = category.Id // CategoryName yerine CategoryId'yi ayarlıyoruz
-            };
+            var product = MapProductDtoToProduct(productDto, category.Id);
 
             await _productRepository.AddAsync(product);
 
-            return new ApiResponse<Product>
-            {
-                Success = true,
-                Message = "Product added successfully",
-                Data = product
-            };
+            return CreateSuccessResponse(product, "Product added successfully");
         }
 
         public async Task<ApiResponse<string>> UpdateProductByName(ProductDto productDto)
@@ -71,42 +43,20 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             var product = await _productRepository.GetByNameAsync(productDto.Name);
             if (product == null)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "Product not found",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("Product not found");
             }
 
-            // Yeni kategori adının geçerli olup olmadığını kontrol edin
-            var category = await _categoryRepository.GetByNameAsync(productDto.CategoryName);
+            var category = await ValidateCategory(productDto.CategoryName);
             if (category == null)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "Invalid category name",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("Invalid category name");
             }
 
-            product.Description = productDto.Description;
-            product.Price = productDto.Price;
-            product.IsActive = productDto.IsActive;
-            product.PointRate = productDto.PointRate;
-            product.MaxPoint = productDto.MaxPoint;
-            product.Stock = productDto.Stock;
-            product.CategoryId = category.Id; // Yeni kategori ID'sini ayarlayın
+            UpdateProductDetails(product, productDto, category.Id);
 
             await _productRepository.UpdateAsync(product);
 
-            return new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Product updated successfully",
-                Data = null
-            };
+            return CreateSuccessResponse("Product updated successfully");
         }
 
         public async Task<ApiResponse<string>> DeleteProductByName(string name)
@@ -114,54 +64,29 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             var product = await _productRepository.GetByNameAsync(name);
             if (product == null)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "Product not found",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("Product not found");
             }
 
             await _productRepository.DeleteAsync(product.Id);
 
-            return new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Product deleted successfully",
-                Data = null
-            };
+            return CreateSuccessResponse("Product deleted successfully");
         }
 
         public async Task<ApiResponse<List<Product>>> GetProductsByCategoryName(string categoryName)
         {
-            var category = await _categoryRepository.GetByNameAsync(categoryName);
+            var category = await ValidateCategory(categoryName);
             if (category == null)
             {
-                return new ApiResponse<List<Product>>
-                {
-                    Success = false,
-                    Message = "Category not found",
-                    Data = null
-                };
+                return CreateErrorResponse<List<Product>>("Category not found");
             }
 
             var products = await _productRepository.GetByCategoryAsync(category.Id);
-            if (products == null || products.Count == 0)
+            if (products == null || !products.Any())
             {
-                return new ApiResponse<List<Product>>
-                {
-                    Success = false,
-                    Message = "No products found for the given category",
-                    Data = null
-                };
+                return CreateErrorResponse<List<Product>>("No products found for the given category");
             }
 
-            return new ApiResponse<List<Product>>
-            {
-                Success = true,
-                Message = "Products retrieved successfully",
-                Data = products
-            };
+            return CreateSuccessResponse(products.ToList(), "Products retrieved successfully");
         }
 
         public async Task<ApiResponse<List<Product>>> GetAllAsync()
@@ -170,20 +95,56 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
             if (products == null || !products.Any())
             {
-                return new ApiResponse<List<Product>>
-                {
-                    Success = false,
-                    Message = "No products found",
-                    Data = null
-                };
+                return CreateErrorResponse<List<Product>>("No products found");
             }
 
-            return new ApiResponse<List<Product>>
+            return CreateSuccessResponse(products.ToList(), "All products retrieved successfully");
+        }
+
+        private async Task<Category?> ValidateCategory(string categoryName)
+        {
+            return await _categoryRepository.GetByNameAsync(categoryName);
+        }
+
+        private static Product MapProductDtoToProduct(ProductDto productDto, int categoryId)
+        {
+            return new Product
             {
-                Success = true,
-                Message = "All products retrieved successfully",
-                Data = products.ToList()
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                IsActive = productDto.IsActive,
+                PointRate = productDto.PointRate,
+                MaxPoint = productDto.MaxPoint,
+                Stock = productDto.Stock,
+                CategoryId = categoryId
             };
+        }
+
+        private static void UpdateProductDetails(Product product, ProductDto productDto, int categoryId)
+        {
+            product.Description = productDto.Description;
+            product.Price = productDto.Price;
+            product.IsActive = productDto.IsActive;
+            product.PointRate = productDto.PointRate;
+            product.MaxPoint = productDto.MaxPoint;
+            product.Stock = productDto.Stock;
+            product.CategoryId = categoryId;
+        }
+
+        private static ApiResponse<T> CreateErrorResponse<T>(string message)
+        {
+            return new ApiResponse<T> { Success = false, Message = message, Data = default };
+        }
+
+        private static ApiResponse<T> CreateSuccessResponse<T>(T data, string message)
+        {
+            return new ApiResponse<T> { Success = true, Message = message, Data = data };
+        }
+
+        private static ApiResponse<string> CreateSuccessResponse(string message)
+        {
+            return new ApiResponse<string> { Success = true, Message = message, Data = null };
         }
     }
 }

@@ -17,70 +17,30 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
         public async Task<ApiResponse<User>> Register(UserDto userDto)
         {
-            // E-posta adresiyle kayıtlı bir kullanıcı olup olmadığını kontrol et
-            var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
-            if (existingUser != null)
+            if (await UserExists(userDto.Email))
             {
-                return new ApiResponse<User>
-                {
-                    Success = false,
-                    Message = "A user with this email already exists.",
-                    Data = null
-                };
+                return CreateErrorResponse<User>("A user with this email already exists.");
             }
 
-            // Kullanıcıyı oluşturma işlemi
-            var user = new User
-            {
-                FirstName = userDto.FirstName,
-                LastName = userDto.LastName,
-                Email = userDto.Email,
-                Password = userDto.Password, // Şifreyi hashlemeyi unutmayın
-                Role = "User",
-                Points = 0
-            };
+            var user = MapUserDtoToUser(userDto, "User");
 
             await _userRepository.AddAsync(user);
 
-            return new ApiResponse<User>
-            {
-                Success = true,
-                Message = "User registered successfully",
-                Data = user
-            };
+            return CreateSuccessResponse(user, "User registered successfully");
         }
 
         public async Task<ApiResponse<User>> RegisterAdmin(AdminRegistrationDto adminRegistrationDto)
         {
-            var existingUser = await _userRepository.GetByEmailAsync(adminRegistrationDto.Email);
-            if (existingUser != null)
+            if (await UserExists(adminRegistrationDto.Email))
             {
-                return new ApiResponse<User>
-                {
-                    Success = false,
-                    Message = "A user with this email already exists.",
-                    Data = null
-                };
+                return CreateErrorResponse<User>("A user with this email already exists.");
             }
-            
-            var user = new User
-            {
-                FirstName = adminRegistrationDto.FirstName,
-                LastName = adminRegistrationDto.LastName,
-                Email = adminRegistrationDto.Email,
-                Password = adminRegistrationDto.Password,
-                Role = "Admin",
-                Points = 0
-            };
+
+            var user = MapAdminDtoToUser(adminRegistrationDto);
 
             await _userRepository.AddAsync(user);
 
-            return new ApiResponse<User>
-            {
-                Success = true,
-                Message = "Admin registered successfully",
-                Data = user
-            };
+            return CreateSuccessResponse(user, "Admin registered successfully");
         }
 
         public async Task<ApiResponse<User>> Login(UserLoginDto userLoginDto)
@@ -88,108 +48,54 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             var user = await _userRepository.GetByEmailAndPasswordAsync(userLoginDto.Email, userLoginDto.Password);
             if (user == null)
             {
-                return new ApiResponse<User>
-                {
-                    Success = false,
-                    Message = "Invalid email or password",
-                    Data = null
-                };
+                return CreateErrorResponse<User>("Invalid email or password");
             }
 
-            return new ApiResponse<User>
-            {
-                Success = true,
-                Message = "Login successful",
-                Data = user
-            };
+            return CreateSuccessResponse(user, "Login successful");
         }
-
 
         public async Task<ApiResponse<string>> UpdateUserByEmail(string email, UserDto userDto)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await GetUserByEmail(email);
             if (user == null)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "User not found",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("User not found");
             }
 
-            // Yeni email ile başka bir kullanıcı var mı kontrol et
-            if (!string.Equals(email, userDto.Email, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(email, userDto.Email, StringComparison.OrdinalIgnoreCase) && await UserExists(userDto.Email))
             {
-                var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
-                if (existingUser != null)
-                {
-                    return new ApiResponse<string>
-                    {
-                        Success = false,
-                        Message = "A user with this email already exists.",
-                        Data = null
-                    };
-                }
+                return CreateErrorResponse<string>("A user with this email already exists.");
             }
 
-            user.FirstName = userDto.FirstName;
-            user.LastName = userDto.LastName;
-            user.Email = userDto.Email; // Email güncelleniyor
-            user.Password = userDto.Password; // Password değişikliği şifreleme işlemiyle beraber yapılmalıdır
+            UpdateUserDetails(user, userDto);
 
             await _userRepository.UpdateAsync(user);
 
-            return new ApiResponse<string>
-            {
-                Success = true,
-                Message = "User updated successfully",
-                Data = null
-            };
+            return CreateSuccessResponse("User updated successfully");
         }
 
         public async Task<ApiResponse<string>> DeleteUserByEmail(string email)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await GetUserByEmail(email);
             if (user == null)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "User not found",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("User not found");
             }
 
             await _userRepository.DeleteAsync(user.Id);
 
-            return new ApiResponse<string>
-            {
-                Success = true,
-                Message = "User deleted successfully",
-                Data = null
-            };
+            return CreateSuccessResponse("User deleted successfully");
         }
-        
+
         public async Task<ApiResponse<decimal>> GetUserPointsByEmail(string email)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await GetUserByEmail(email);
             if (user == null)
             {
-                return new ApiResponse<decimal>
-                {
-                    Success = false,
-                    Message = "User not found",
-                    Data = 0
-                };
+                return CreateErrorResponse<decimal>("User not found");
             }
 
-            return new ApiResponse<decimal>
-            {
-                Success = true,
-                Message = "User points retrieved successfully",
-                Data = user.Points
-            };
+            return CreateSuccessResponse(user.Points, "User points retrieved successfully");
         }
 
         public async Task<ApiResponse<List<User>>> GetAllAsync()
@@ -198,20 +104,70 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
             if (users == null || !users.Any())
             {
-                return new ApiResponse<List<User>>
-                {
-                    Success = false,
-                    Message = "No users found",
-                    Data = null
-                };
+                return CreateErrorResponse<List<User>>("No users found");
             }
 
-            return new ApiResponse<List<User>>
+            return CreateSuccessResponse(users.ToList(), "Users retrieved successfully");
+        }
+
+        private async Task<bool> UserExists(string email)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            return user != null;
+        }
+
+        private async Task<User?> GetUserByEmail(string email)
+        {
+            return await _userRepository.GetByEmailAsync(email);
+        }
+
+        private static User MapUserDtoToUser(UserDto userDto, string role)
+        {
+            return new User
             {
-                Success = true,
-                Message = "Users retrieved successfully",
-                Data = users.ToList()
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                Email = userDto.Email,
+                Password = userDto.Password,
+                Role = role,
+                Points = 0
             };
+        }
+
+        private static User MapAdminDtoToUser(AdminRegistrationDto adminRegistrationDto)
+        {
+            return new User
+            {
+                FirstName = adminRegistrationDto.FirstName,
+                LastName = adminRegistrationDto.LastName,
+                Email = adminRegistrationDto.Email,
+                Password = adminRegistrationDto.Password,
+                Role = "Admin",
+                Points = 0
+            };
+        }
+
+        private static void UpdateUserDetails(User user, UserDto userDto)
+        {
+            user.FirstName = userDto.FirstName;
+            user.LastName = userDto.LastName;
+            user.Email = userDto.Email;
+            user.Password = userDto.Password; 
+        }
+
+        private static ApiResponse<T> CreateErrorResponse<T>(string message)
+        {
+            return new ApiResponse<T> { Success = false, Message = message, Data = default };
+        }
+
+        private static ApiResponse<T> CreateSuccessResponse<T>(T data, string message)
+        {
+            return new ApiResponse<T> { Success = true, Message = message, Data = data };
+        }
+
+        private static ApiResponse<string> CreateSuccessResponse(string message)
+        {
+            return new ApiResponse<string> { Success = true, Message = message, Data = null };
         }
     }
 }

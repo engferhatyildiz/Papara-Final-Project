@@ -17,121 +17,59 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
 
         public async Task<ApiResponse<Category>> AddCategory(CategoryDto categoryDto)
         {
-            // Aynı isme sahip kategori var mı kontrol ediliyor
             var existingCategory = await _categoryRepository.GetByNameAsync(categoryDto.Name);
             if (existingCategory != null)
             {
-                return new ApiResponse<Category>
-                {
-                    Success = false,
-                    Message = "A category with this name already exists.",
-                    Data = null
-                };
+                return CreateErrorResponse<Category>("A category with this name already exists.");
             }
 
-            // Yeni kategori oluşturuluyor
-            var category = new Category
-            {
-                Name = categoryDto.Name,
-                Url = categoryDto.Url,
-                Tags = categoryDto.Tags
-            };
-
+            var category = CreateCategoryFromDto(categoryDto);
             await _categoryRepository.AddAsync(category);
 
-            return new ApiResponse<Category>
-            {
-                Success = true,
-                Message = "Category added successfully",
-                Data = category
-            };
+            return CreateSuccessResponse(category, "Category added successfully");
         }
 
         public async Task<ApiResponse<string>> UpdateCategory(string name, CategoryDto categoryDto)
         {
-            // Kategori ismi ile veritabanında var mı kontrol ediliyor
             var category = await _categoryRepository.GetByNameAsync(name);
             if (category == null)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "Category not found",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("Category not found");
             }
 
-            // Kategori güncelleniyor
-            category.Name = categoryDto.Name;
-            category.Url = categoryDto.Url;
-            category.Tags = categoryDto.Tags;
-
+            UpdateCategoryFromDto(category, categoryDto);
             await _categoryRepository.UpdateAsync(category);
 
-            return new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Category updated successfully",
-                Data = null
-            };
+            return CreateSuccessResponse("Category updated successfully");
         }
 
         public async Task<ApiResponse<string>> DeleteCategory(string name)
         {
-            // Kategori ismi ile veritabanında var mı kontrol ediliyor
             var category = await _categoryRepository.GetByNameAsync(name);
             if (category == null)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "Category not found",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("Category not found");
             }
 
-            // Kategoride ürün olup olmadığı kontrol ediliyor
-            var hasProducts = await _categoryRepository.HasProductsAsync(category.Id);
-            if (hasProducts)
+            var canDelete = await CanDeleteCategory(category);
+            if (!canDelete)
             {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "Cannot delete category. Category contains products.",
-                    Data = null
-                };
+                return CreateErrorResponse<string>("Cannot delete category. Category contains products.");
             }
 
-            // Kategori siliniyor
             await _categoryRepository.DeleteAsync(category);
-
-            return new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Category deleted successfully",
-                Data = null
-            };
+            return CreateSuccessResponse("Category deleted successfully");
         }
 
         public async Task<ApiResponse<List<Category>>> GetAllAsync()
         {
             var categories = await _categoryRepository.GetAllAsync();
-            if (categories == null || !categories.Any())
+            if (!categories.Any())
             {
-                return new ApiResponse<List<Category>>
-                {
-                    Success = false,
-                    Message = "No categories found",
-                    Data = null
-                };
+                return CreateErrorResponse<List<Category>>("No categories found");
             }
 
-            return new ApiResponse<List<Category>>
-            {
-                Success = true,
-                Message = "Categories retrieved successfully",
-                Data = categories.ToList()
-            };
+            return CreateSuccessResponse(categories.ToList(), "Categories retrieved successfully");
         }
 
         public async Task<ApiResponse<Category>> GetByNameAsync(string name)
@@ -139,20 +77,62 @@ namespace PaparaDigitalProductPlatform.Infrastructure.Services
             var category = await _categoryRepository.GetByNameAsync(name);
             if (category == null)
             {
-                return new ApiResponse<Category>
-                {
-                    Success = false,
-                    Message = "Category not found",
-                    Data = null
-                };
+                return CreateErrorResponse<Category>("Category not found");
             }
 
-            return new ApiResponse<Category>
+            return CreateSuccessResponse(category, "Category retrieved successfully");
+        }
+
+        private static ApiResponse<T> CreateErrorResponse<T>(string message)
+        {
+            return new ApiResponse<T>
+            {
+                Success = false,
+                Message = message,
+                Data = default
+            };
+        }
+
+        private static ApiResponse<T> CreateSuccessResponse<T>(T data, string message)
+        {
+            return new ApiResponse<T>
             {
                 Success = true,
-                Message = "Category retrieved successfully",
-                Data = category
+                Message = message,
+                Data = data
             };
+        }
+
+        private static ApiResponse<string> CreateSuccessResponse(string message)
+        {
+            return new ApiResponse<string>
+            {
+                Success = true,
+                Message = message,
+                Data = null
+            };
+        }
+
+        private static Category CreateCategoryFromDto(CategoryDto categoryDto)
+        {
+            return new Category
+            {
+                Name = categoryDto.Name,
+                Url = categoryDto.Url,
+                Tags = categoryDto.Tags
+            };
+        }
+
+        private static void UpdateCategoryFromDto(Category category, CategoryDto categoryDto)
+        {
+            category.Name = categoryDto.Name;
+            category.Url = categoryDto.Url;
+            category.Tags = categoryDto.Tags;
+        }
+
+        private async Task<bool> CanDeleteCategory(Category category)
+        {
+            return !await _categoryRepository.HasProductsAsync(category.Id);
         }
     }
 }
