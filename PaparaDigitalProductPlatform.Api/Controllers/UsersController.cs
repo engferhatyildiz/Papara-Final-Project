@@ -31,18 +31,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             }
             return BadRequest(response);
         }
-
-        [HttpPost("registerAdmin")]
-        public async Task<IActionResult> RegisterAdmin(AdminRegistrationDto adminRegistrationDto)
-        {
-            var response = await _userService.RegisterAdmin(adminRegistrationDto);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
-        }
-
+        
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
@@ -66,32 +55,7 @@ namespace PaparaDigitalProductPlatform.Controllers
             });
         }
 
-        //[Authorize(Roles = "Admin")]
-        [HttpPut("{email}")]
-        public async Task<IActionResult> Update(string email, UserDto userDto)
-        {
-            var response = await _userService.UpdateUserByEmail(email, userDto);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-
-            return NotFound(response);
-        }
-
-
-        //[Authorize(Roles = "Admin")]
-        [HttpDelete("{email}")]
-        public async Task<IActionResult> Delete(string email)
-        {
-            var response = await _userService.DeleteUserByEmail(email);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-
-            return NotFound(response);
-        }
+       
 
         [HttpGet("points")]
         public async Task<IActionResult> GetUserPointsByEmail([FromQuery] string email)
@@ -105,16 +69,6 @@ namespace PaparaDigitalProductPlatform.Controllers
             return NotFound(response);
         }
         
-        //[Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<User>>>> GetAll()
-        {
-            var response = await _userService.GetAllAsync();
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            return NotFound(response);
-        }
+        
     }
 }
